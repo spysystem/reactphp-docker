@@ -178,19 +178,23 @@ class Client
     /**
      * List containers
      *
-     * @param boolean $all
-     * @param boolean $size
+     * @param boolean      $all
+     * @param boolean      $size
+     * @param integer|null $limit
+     * @param array        $filters
      * @return PromiseInterface Promise<array> list of container objects
      * @link https://docs.docker.com/engine/api/v1.40/#operation/ContainerList
      */
-    public function containerList($all = false, $size = false)
+    public function containerList($all = false, $size = false, $limit = null, $filters = array())
     {
         return $this->browser->get(
             $this->uri->expand(
-                'containers/json{?all,size}',
+                'containers/json{?all,size,limit,filters}',
                 array(
                     'all' => $this->boolArg($all),
-                    'size' => $this->boolArg($size)
+                    'size' => $this->boolArg($size),
+                    'limit' => $limit,
+                    'filters' => $filters ? json_encode($filters) : null
                 )
             )
         )->then(array($this->parser, 'expectJson'));
